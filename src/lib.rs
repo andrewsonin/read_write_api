@@ -3,6 +3,72 @@ use {
     std::ops::{Deref, DerefMut},
 };
 
+pub trait ReadApi
+{
+    /// Dereference target of the return type of the
+    /// [`Self::read`] method.
+    type Target;
+
+    /// [`Self::read`] return type.
+    type ReadGuard<'a>: Deref<Target=Self::Target>
+        where Self: 'a;
+
+    /// [`RwLock::read`] analogue.
+    fn read(&self) -> Self::ReadGuard<'_>;
+}
+
+pub trait TrivialReadApi: Deref
+    where
+        Self::Target: Sized {}
+
+impl<T> ReadApi for T
+    where
+        Self: TrivialReadApi,
+        <Self as Deref>::Target: Sized
+{
+    type Target = <T as Deref>::Target;
+    type ReadGuard<'a> = &'a Self::Target
+        where Self: 'a;
+
+    #[inline(always)]
+    fn read(&self) -> &Self::Target {
+        self
+    }
+}
+
+pub trait WriteApi
+{
+    /// Dereference target of the return type of the
+    /// [`Self::write`] method.
+    type Target;
+
+    /// [`Self::write`] return type.
+    type WriteGuard<'a>: DerefMut<Target=Self::Target>
+        where Self: 'a;
+
+    /// [`RwLock::write`] analogue.
+    fn write(&mut self) -> Self::WriteGuard<'_>;
+}
+
+pub trait TrivialWriteApi: DerefMut
+    where
+        Self::Target: Sized {}
+
+impl<T> WriteApi for T
+    where
+        Self: TrivialWriteApi,
+        <Self as Deref>::Target: Sized
+{
+    type Target = <T as Deref>::Target;
+    type WriteGuard<'a> = &'a mut Self::Target
+        where Self: 'a;
+
+    #[inline(always)]
+    fn write(&mut self) -> &mut Self::Target {
+        self
+    }
+}
+
 #[doc = include_str!("../README.md")]
 pub trait ReadWriteApi
 {
