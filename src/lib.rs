@@ -2,20 +2,20 @@ use {
     parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard},
     std::ops::{Deref, DerefMut},
 };
-pub use auto_impl::{AutoReadApi, AutoWriteApi};
+pub use wrappers::{ReadApiWrapper, RwApiWrapper, RwApiWrapperOwned};
 
-mod auto_impl;
+mod wrappers;
 
 #[doc = include_str!("../README.md")]
-pub trait ReadWriteApi<T>: ReadApi<Target=T> + WriteApi<Target=T>
+pub trait RwApi<T>: ReadApi<Target=T> + WriteApi<Target=T>
 {}
 
-impl<T, R> ReadWriteApi<R> for T
+impl<T, R> RwApi<R> for T
     where
         T: ReadApi<Target=R> + WriteApi<Target=R>
 {}
 
-/// Provides constant part of the [`ReadWriteApi`] interface.
+/// Provides constant part of the [`RwApi`] interface.
 pub trait ReadApi
 {
     /// Dereference target of the return type of the
@@ -30,7 +30,7 @@ pub trait ReadApi
     fn read(&self) -> Self::ReadGuard<'_>;
 }
 
-/// Provides mutable part of the [`ReadWriteApi`] interface.
+/// Provides mutable part of the [`RwApi`] interface.
 pub trait WriteApi
 {
     /// Dereference target of the return type of the
