@@ -11,7 +11,7 @@ but not constant, reference.
 use parking_lot::RwLock;
 use read_write_api::{RwApi, RwApiWrapper, RwApiWrapperOwned};
 
-fn do_something(mut x: impl RwApi<u64>) -> u64 {
+fn do_something(mut x: impl RwApi<Target=u64>) -> u64 {
     if *x.read() == 1 {
         *x.write() = 2;
         *x.read()
@@ -32,7 +32,7 @@ assert_eq!(do_something(&RwLock::new(3)), 3);
 assert_eq!(do_something(&mut RwLock::new(1)), 2);
 assert_eq!(do_something(&mut RwLock::new(3)), 3);
 
-fn do_something_ref<'a>(mut x: impl RwApi<&'a mut u64>) -> u64 {
+fn do_something_ref<'a>(mut x: impl RwApi<Target=&'a mut u64>) -> u64 {
     if **x.read() == 1 {
         **x.write() = 2;
         **x.read()
