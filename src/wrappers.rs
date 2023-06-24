@@ -21,9 +21,8 @@ pub struct RwApiWrapperOwned<T>(
     pub T
 );
 
-impl<'a, T> ReadApi for ReadApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a T> for ReadApiWrapper<'a, T>
 {
-    type Target = &'a T;
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
 
@@ -33,9 +32,8 @@ impl<'a, T> ReadApi for ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &ReadApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a T> for &ReadApiWrapper<'a, T>
 {
-    type Target = &'a T;
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
 
@@ -45,9 +43,8 @@ impl<'a, T> ReadApi for &ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &mut ReadApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a T> for &mut ReadApiWrapper<'a, T>
 {
-    type Target = &'a T;
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
 
@@ -57,9 +54,8 @@ impl<'a, T> ReadApi for &mut ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for RwApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a mut T> for RwApiWrapper<'a, T>
 {
-    type Target = &'a mut T;
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
 
@@ -69,9 +65,8 @@ impl<'a, T> ReadApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &RwApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a mut T> for &RwApiWrapper<'a, T>
 {
-    type Target = &'a mut T;
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
 
@@ -81,9 +76,8 @@ impl<'a, T> ReadApi for &RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &mut RwApiWrapper<'a, T>
+impl<'a, T> ReadApi<&'a mut T> for &mut RwApiWrapper<'a, T>
 {
-    type Target = &'a mut T;
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
 
@@ -93,9 +87,8 @@ impl<'a, T> ReadApi for &mut RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> WriteApi for RwApiWrapper<'a, T>
+impl<'a, T> WriteApi<&'a mut T> for RwApiWrapper<'a, T>
 {
-    type Target = &'a mut T;
     type WriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
 
@@ -105,9 +98,8 @@ impl<'a, T> WriteApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> WriteApi for &mut RwApiWrapper<'a, T>
+impl<'a, T> WriteApi<&'a mut T> for &mut RwApiWrapper<'a, T>
 {
-    type Target = &'a mut T;
     type WriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
 
@@ -117,9 +109,8 @@ impl<'a, T> WriteApi for &mut RwApiWrapper<'a, T>
     }
 }
 
-impl<T> ReadApi for RwApiWrapperOwned<T>
+impl<T> ReadApi<T> for RwApiWrapperOwned<T>
 {
-    type Target = T;
     type ReadGuard<'i> = &'i T
         where Self: 'i;
 
@@ -129,9 +120,8 @@ impl<T> ReadApi for RwApiWrapperOwned<T>
     }
 }
 
-impl<T> ReadApi for &RwApiWrapperOwned<T>
+impl<T> ReadApi<T> for &RwApiWrapperOwned<T>
 {
-    type Target = T;
     type ReadGuard<'i> = &'i T
         where Self: 'i;
 
@@ -141,9 +131,8 @@ impl<T> ReadApi for &RwApiWrapperOwned<T>
     }
 }
 
-impl<T> ReadApi for &mut RwApiWrapperOwned<T>
+impl<T> ReadApi<T> for &mut RwApiWrapperOwned<T>
 {
-    type Target = T;
     type ReadGuard<'i> = &'i T
         where Self: 'i;
 
@@ -153,9 +142,8 @@ impl<T> ReadApi for &mut RwApiWrapperOwned<T>
     }
 }
 
-impl<T> WriteApi for RwApiWrapperOwned<T>
+impl<T> WriteApi<T> for RwApiWrapperOwned<T>
 {
-    type Target = T;
     type WriteGuard<'i> = &'i mut T
         where Self: 'i;
 
@@ -165,9 +153,8 @@ impl<T> WriteApi for RwApiWrapperOwned<T>
     }
 }
 
-impl<T> WriteApi for &mut RwApiWrapperOwned<T>
+impl<T> WriteApi<T> for &mut RwApiWrapperOwned<T>
 {
-    type Target = T;
     type WriteGuard<'i> = &'i mut T
         where Self: 'i;
 

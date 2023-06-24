@@ -7,23 +7,19 @@ pub use wrappers::{ReadApiWrapper, RwApiWrapper, RwApiWrapperOwned};
 mod wrappers;
 
 #[doc = include_str!("../README.md")]
-pub trait RwApi<T>: ReadApi<Target=T> + WriteApi<Target=T>
+pub trait RwApi<T>: ReadApi<T> + WriteApi<T>
 {}
 
 impl<T, R> RwApi<R> for T
     where
-        T: ReadApi<Target=R> + WriteApi<Target=R>
+        T: ReadApi<R> + WriteApi<R>
 {}
 
 /// Provides constant part of the [`RwApi`] interface.
-pub trait ReadApi
+pub trait ReadApi<T>
 {
-    /// Dereference target of the return type of the
-    /// [`Self::read`] method.
-    type Target;
-
     /// [`Self::read`] return type.
-    type ReadGuard<'a>: Deref<Target=Self::Target>
+    type ReadGuard<'a>: Deref<Target=T>
         where Self: 'a;
 
     /// [`RwLock::read`] analogue.
@@ -31,23 +27,18 @@ pub trait ReadApi
 }
 
 /// Provides mutable part of the [`RwApi`] interface.
-pub trait WriteApi
+pub trait WriteApi<T>
 {
-    /// Dereference target of the return type of the
-    /// [`Self::write`] method.
-    type Target;
-
     /// [`Self::write`] return type.
-    type WriteGuard<'a>: DerefMut<Target=Self::Target>
+    type WriteGuard<'a>: DerefMut<Target=T>
         where Self: 'a;
 
     /// [`RwLock::write`] analogue.
     fn write(&mut self) -> Self::WriteGuard<'_>;
 }
 
-impl<T> ReadApi for RwLock<T>
+impl<T> ReadApi<T> for RwLock<T>
 {
-    type Target = T;
     type ReadGuard<'a> = RwLockReadGuard<'a, T>
         where Self: 'a;
 
@@ -57,9 +48,8 @@ impl<T> ReadApi for RwLock<T>
     }
 }
 
-impl<T> WriteApi for RwLock<T>
+impl<T> WriteApi<T> for RwLock<T>
 {
-    type Target = T;
     type WriteGuard<'a> = &'a mut T
         where Self: 'a;
 
@@ -69,9 +59,8 @@ impl<T> WriteApi for RwLock<T>
     }
 }
 
-impl<T> ReadApi for &RwLock<T>
+impl<T> ReadApi<T> for &RwLock<T>
 {
-    type Target = T;
     type ReadGuard<'a> = RwLockReadGuard<'a, T>
         where Self: 'a;
 
@@ -81,9 +70,8 @@ impl<T> ReadApi for &RwLock<T>
     }
 }
 
-impl<T> WriteApi for &RwLock<T>
+impl<T> WriteApi<T> for &RwLock<T>
 {
-    type Target = T;
     type WriteGuard<'a> = RwLockWriteGuard<'a, T>
         where Self: 'a;
 
@@ -93,9 +81,8 @@ impl<T> WriteApi for &RwLock<T>
     }
 }
 
-impl<T> ReadApi for &mut RwLock<T>
+impl<T> ReadApi<T> for &mut RwLock<T>
 {
-    type Target = T;
     type ReadGuard<'a> = RwLockReadGuard<'a, T>
         where Self: 'a;
 
@@ -105,9 +92,8 @@ impl<T> ReadApi for &mut RwLock<T>
     }
 }
 
-impl<T> WriteApi for &mut RwLock<T>
+impl<T> WriteApi<T> for &mut RwLock<T>
 {
-    type Target = T;
     type WriteGuard<'a> = &'a mut T
         where Self: 'a;
 
