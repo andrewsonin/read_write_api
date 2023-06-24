@@ -21,39 +21,6 @@ pub struct RwApiWrapperOwned<T>(
     pub T
 );
 
-impl<'a, T> ReadApi<T> for ReadApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'a T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &'a T {
-        self.0
-    }
-}
-
-impl<'a, T> ReadApi<T> for &ReadApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'a T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &'a T {
-        self.0
-    }
-}
-
-impl<'a, T> ReadApi<T> for &mut ReadApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'a T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &'a T {
-        self.0
-    }
-}
-
 impl<'a, T> ReadApi<&'a T> for ReadApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a T
@@ -87,39 +54,6 @@ impl<'a, T> ReadApi<&'a T> for &mut ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi<T> for RwApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'i T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &T {
-        self.0
-    }
-}
-
-impl<'a, T> ReadApi<T> for &RwApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'i T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &T {
-        self.0
-    }
-}
-
-impl<'a, T> ReadApi<T> for &mut RwApiWrapper<'a, T>
-{
-    type ReadGuard<'i> = &'i T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn read(&self) -> &T {
-        self.0
-    }
-}
-
 impl<'a, T> ReadApi<&'a mut T> for RwApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a mut T
@@ -150,28 +84,6 @@ impl<'a, T> ReadApi<&'a mut T> for &mut RwApiWrapper<'a, T>
     #[inline(always)]
     fn read(&self) -> &&'a mut T {
         &self.0
-    }
-}
-
-impl<'a, T> WriteApi<T> for RwApiWrapper<'a, T>
-{
-    type WriteGuard<'i> = &'i mut T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn write(&mut self) -> &mut T {
-        self.0
-    }
-}
-
-impl<'a, T> WriteApi<T> for &mut RwApiWrapper<'a, T>
-{
-    type WriteGuard<'i> = &'i mut T
-        where Self: 'i;
-
-    #[inline(always)]
-    fn write(&mut self) -> &mut T {
-        self.0
     }
 }
 
