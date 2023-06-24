@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Hash)]
-/// [`ReadApi`] wrapper for constant references.
+/// [`ReadApi`](crate::ReadApi) wrapper for constant references.
 pub struct ReadApiWrapper<'a, T>(
     /// Wrapped reference.
     pub &'a T

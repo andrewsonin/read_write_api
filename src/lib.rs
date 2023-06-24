@@ -15,7 +15,7 @@ pub trait ReadApi: GuardedTarget
     type ReadGuard<'a>: Deref<Target=Self::Target>
         where Self: 'a;
 
-    /// [`RwLock::read`] analogue.
+    /// [`RwLock::read`](parking_lot::RwLock::read) analogue.
     fn read(&self) -> Self::ReadGuard<'_>;
 }
 
@@ -26,11 +26,11 @@ pub trait WriteApi: GuardedTarget
     type WriteGuard<'a>: DerefMut<Target=Self::Target>
         where Self: 'a;
 
-    /// [`RwLock::write`] analogue.
+    /// [`RwLock::write`](parking_lot::RwLock::write) analogue.
     fn write(&mut self) -> Self::WriteGuard<'_>;
 }
 
-/// Provides single dereference target type both for [`ReadApi`], [`WriteApi`] and [`RwApi`].
+/// Provides a single dereferencing target type for [`ReadApi`], [`WriteApi`] and [`RwApi`].
 pub trait GuardedTarget
 {
     /// Dereference target of the read and write guards.
