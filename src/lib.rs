@@ -199,7 +199,8 @@ pub trait WriteApi: GuardedTarget
     fn write(&mut self) -> Self::WriteGuard<'_>;
 }
 
-/// Provides a single dereferencing target type for [`ReadApi`], [`WriteApi`] and [`RwApi`].
+/// Provides a single dereferencing target type for
+/// the [`ReadApi`], [`WriteApi`] and [`RwApi`] traits.
 ///
 /// # Example
 ///
@@ -240,4 +241,17 @@ pub trait GuardedTarget
 {
     /// Dereference target of the read and write guards.
     type Target;
+}
+
+#[cfg(doctest)]
+mod test_readme
+{
+    macro_rules! external_doc_test {
+        ($x:expr) => {
+            #[doc = $x]
+            extern {}
+        };
+    }
+
+    external_doc_test!(include_str!("../README.md"));
 }
