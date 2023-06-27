@@ -1,6 +1,9 @@
-use crate::{ReadApi, RwApi, WriteApi};
+use crate::{DowngradableWriteApi, ReadApi, RwApi, UpgradableReadApi, WriteApi};
 
 impl<T, R> RwApi for T
     where
-        T: ReadApi<Target=R> + WriteApi<Target=R>
+        Self: ReadApi<Target=R>
+        + WriteApi<Target=R>
+        + DowngradableWriteApi<Target=R>
+        + UpgradableReadApi<Target=R>
 {}
