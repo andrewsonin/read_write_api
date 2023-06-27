@@ -60,7 +60,7 @@ mod wrappers;
 /// assert_eq!(do_something_ref(&mut RwLock::new(&mut 1)), 2);
 /// assert_eq!(do_something_ref(&mut RwLock::new(&mut 3)), 3);
 /// ```
-pub trait RwApi: ReadApi + WriteApi {}
+pub trait RwApi: ReadApi + WriteApi + UpgradableReadApi + DowngradableWriteApi {}
 
 /// Provides a constant part of the [`RwApi`] interface.
 ///
@@ -218,7 +218,7 @@ pub trait DowngradableWriteApi: GuardedTarget
 pub trait UpgradableReadGuard: Deref
 {
     type UpgradeResult: DerefMut<Target=Self::Target>;
-    type UpgradeToDowngradableResult: DowngradableWriteGuard<DowngradeResult=Self>;
+    type UpgradeToDowngradableResult: DowngradableWriteGuard<DowngradeToUpgradableResult=Self>;
 
     fn upgrade(self) -> Self::UpgradeResult;
 
@@ -228,7 +228,7 @@ pub trait UpgradableReadGuard: Deref
 pub trait DowngradableWriteGuard: DerefMut
 {
     type DowngradeResult: Deref<Target=Self::Target>;
-    type DowngradeToUpgradableResult: UpgradableReadGuard<UpgradeResult=Self>;
+    type DowngradeToUpgradableResult: UpgradableReadGuard<UpgradeToDowngradableResult=Self>;
 
     fn downgrade(self) -> Self::DowngradeResult;
 
@@ -241,7 +241,14 @@ pub trait DowngradableWriteGuard: DerefMut
 /// # Example
 ///
 /// ```rust
-/// use read_write_api::{GuardedTarget, ReadApi, RwApi, WriteApi};
+/// use read_write_api::{
+///     DowngradableWriteApi,
+///     GuardedTarget,
+///     ReadApi,
+///     RwApi,
+///     UpgradableReadApi,
+///     WriteApi
+/// };
 ///
 /// struct A(u64);
 ///
@@ -265,6 +272,26 @@ pub trait DowngradableWriteGuard: DerefMut
 ///         where Self: 'a;
 ///
 ///     fn write(&mut self) -> Self::WriteGuard<'_> {
+///         &mut self.0
+///     }
+/// }
+///
+/// impl UpgradableReadApi for A
+/// {
+///     type UpgradableReadGuard<'a> = &'a mut u64
+///         where Self: 'a;
+///
+///     fn upgradable_read(&mut self) -> Self::UpgradableReadGuard<'_> {
+///         &mut self.0
+///     }
+/// }
+///
+/// impl DowngradableWriteApi for A
+/// {
+///     type DowngradableWriteGuard<'a> = &'a mut u64
+///         where Self: 'a;
+///
+///     fn downgradable_write(&mut self) -> Self::DowngradableWriteGuard<'_> {
 ///         &mut self.0
 ///     }
 /// }

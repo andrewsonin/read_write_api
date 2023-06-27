@@ -1,4 +1,13 @@
-use crate::{GuardedTarget, ReadApi, ReadApiWrapper, RwApiWrapper, RwApiWrapperOwned, WriteApi};
+use crate::{
+    DowngradableWriteApi,
+    GuardedTarget,
+    ReadApi,
+    ReadApiWrapper,
+    RwApiWrapper,
+    RwApiWrapperOwned,
+    UpgradableReadApi,
+    WriteApi,
+};
 
 impl<'a, T> GuardedTarget for ReadApiWrapper<'a, T> {
     type Target = &'a T;
@@ -102,6 +111,28 @@ impl<'a, T> ReadApi for &mut RwApiWrapper<'a, T>
     }
 }
 
+impl<'a, T> UpgradableReadApi for RwApiWrapper<'a, T>
+{
+    type UpgradableReadGuard<'i> = &'i mut &'a mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn upgradable_read(&mut self) -> &mut &'a mut T {
+        &mut self.0
+    }
+}
+
+impl<'a, T> UpgradableReadApi for &mut RwApiWrapper<'a, T>
+{
+    type UpgradableReadGuard<'i> = &'i mut &'a mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn upgradable_read(&mut self) -> &mut &'a mut T {
+        &mut self.0
+    }
+}
+
 impl<'a, T> WriteApi for RwApiWrapper<'a, T>
 {
     type WriteGuard<'i> = &'i mut &'a mut T
@@ -120,6 +151,28 @@ impl<'a, T> WriteApi for &mut RwApiWrapper<'a, T>
 
     #[inline(always)]
     fn write(&mut self) -> &mut &'a mut T {
+        &mut self.0
+    }
+}
+
+impl<'a, T> DowngradableWriteApi for RwApiWrapper<'a, T>
+{
+    type DowngradableWriteGuard<'i> = &'i mut &'a mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn downgradable_write(&mut self) -> &mut &'a mut T {
+        &mut self.0
+    }
+}
+
+impl<'a, T> DowngradableWriteApi for &mut RwApiWrapper<'a, T>
+{
+    type DowngradableWriteGuard<'i> = &'i mut &'a mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn downgradable_write(&mut self) -> &mut &'a mut T {
         &mut self.0
     }
 }
@@ -157,6 +210,28 @@ impl<T> ReadApi for &mut RwApiWrapperOwned<T>
     }
 }
 
+impl<T> UpgradableReadApi for RwApiWrapperOwned<T>
+{
+    type UpgradableReadGuard<'i> = &'i mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn upgradable_read(&mut self) -> &mut T {
+        &mut self.0
+    }
+}
+
+impl<T> UpgradableReadApi for &mut RwApiWrapperOwned<T>
+{
+    type UpgradableReadGuard<'i> = &'i mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn upgradable_read(&mut self) -> &mut T {
+        &mut self.0
+    }
+}
+
 impl<T> WriteApi for RwApiWrapperOwned<T>
 {
     type WriteGuard<'i> = &'i mut T
@@ -175,6 +250,28 @@ impl<T> WriteApi for &mut RwApiWrapperOwned<T>
 
     #[inline(always)]
     fn write(&mut self) -> &mut T {
+        &mut self.0
+    }
+}
+
+impl<T> DowngradableWriteApi for RwApiWrapperOwned<T>
+{
+    type DowngradableWriteGuard<'i> = &'i mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn downgradable_write(&mut self) -> &mut T {
+        &mut self.0
+    }
+}
+
+impl<T> DowngradableWriteApi for &mut RwApiWrapperOwned<T>
+{
+    type DowngradableWriteGuard<'i> = &'i mut T
+        where Self: 'i;
+
+    #[inline(always)]
+    fn downgradable_write(&mut self) -> &mut T {
         &mut self.0
     }
 }
