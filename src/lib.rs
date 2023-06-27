@@ -16,14 +16,22 @@ mod wrappers;
 ///
 /// ```rust
 /// use parking_lot::RwLock;
-/// use read_write_api::{RwApi, RwApiWrapper, RwApiWrapperOwned};
+/// use read_write_api::{
+///     DowngradableWriteGuard,
+///     RwApi,
+///     RwApiWrapper,
+///     RwApiWrapperOwned,
+///     UpgradableReadGuard,
+/// };
 ///
 /// fn do_something(mut x: impl RwApi<Target=u64>) -> u64 {
-///     if *x.read() == 1 {
-///         *x.write() = 2;
-///         *x.read()
+///     let guard = x.upgradable_read();
+///     if *guard == 1 {
+///         let mut guard = guard.upgrade_to_downgradable();
+///         *guard = 2;
+///         *guard.downgrade()
 ///     } else {
-///         *x.read()
+///         *guard
 ///     }
 /// }
 ///
@@ -130,7 +138,7 @@ pub trait ReadApi: GuardedTarget
     type ReadGuard<'a>: Deref<Target=Self::Target>
         where Self: 'a;
 
-    /// [`RwLock::read`](parking_lot::RwLock::read) analogue.
+    /// Generalizes [`RwLock::read`](parking_lot::RwLock::read).
     fn read(&self) -> Self::ReadGuard<'_>;
 }
 
@@ -195,43 +203,85 @@ pub trait WriteApi: GuardedTarget
     type WriteGuard<'a>: DerefMut<Target=Self::Target>
         where Self: 'a;
 
-    /// [`RwLock::write`](parking_lot::RwLock::write) analogue.
+    /// Generalizes [`RwLock::write`](parking_lot::RwLock::write).
     fn write(&mut self) -> Self::WriteGuard<'_>;
 }
 
+/// Provides a constant (but upgradable) part of the [`RwApi`] interface.
+///
+/// # Example
+///
+/// See the [`RwApi`] docs for usage examples.
 pub trait UpgradableReadApi: GuardedTarget
 {
+    /// [`Self::upgradable_read`] return type.
     type UpgradableReadGuard<'a>: UpgradableReadGuard<Target=Self::Target>
         where Self: 'a;
 
+    /// Generalizes
+    /// [`RwLock::upgradable_read`](parking_lot::RwLock::upgradable_read).
     fn upgradable_read(&mut self) -> Self::UpgradableReadGuard<'_>;
 }
 
+/// Provides a mutable (but downgradable) part of the [`RwApi`] interface.
+///
+/// # Example
+///
+/// See the [`RwApi`] docs for usage examples.
 pub trait DowngradableWriteApi: GuardedTarget
 {
+    /// [`Self::downgradable_write`] return type.
     type DowngradableWriteGuard<'a>: DowngradableWriteGuard<Target=Self::Target>
         where Self: 'a;
 
+    /// [`WriteApi::write`] analogue, which return type can be downgraded.
     fn downgradable_write(&mut self) -> Self::DowngradableWriteGuard<'_>;
 }
 
+/// Provides an interface for upgrading upgradable read guards.
+///
+/// # Example
+///
+/// See the [`GuardedTarget`] docs for implementation examples.
 pub trait UpgradableReadGuard: Deref
 {
+    /// [`Self::upgrade`] return type.
     type UpgradeResult: DerefMut<Target=Self::Target>;
-    type UpgradeToDowngradableResult: DowngradableWriteGuard<DowngradeToUpgradableResult=Self>;
 
+    /// [`Self::upgrade_to_downgradable`] return type.
+    type UpgradeToDowngradableResult: DowngradableWriteGuard<
+        DowngradeToUpgradableResult=Self,
+        Target=Self::Target
+    >;
+
+    /// Generalizes
+    /// [`RwLockUpgradableReadGuard::upgrade`](parking_lot::RwLockUpgradableReadGuard::upgrade).
     fn upgrade(self) -> Self::UpgradeResult;
 
+    /// [`Self::upgrade`] analogue, which return type can be downgraded.
     fn upgrade_to_downgradable(self) -> Self::UpgradeToDowngradableResult;
 }
 
+/// Provides an interface for downgrading downgradable write guards.
+///
+/// # Example
+///
+/// See the [`GuardedTarget`] docs for implementation examples.
 pub trait DowngradableWriteGuard: DerefMut
 {
+    /// [`Self::downgrade`] return type.
     type DowngradeResult: Deref<Target=Self::Target>;
-    type DowngradeToUpgradableResult: UpgradableReadGuard<UpgradeToDowngradableResult=Self>;
 
+    /// [`Self::downgrade_to_upgradable`] return type.
+    type DowngradeToUpgradableResult: UpgradableReadGuard<
+        UpgradeToDowngradableResult=Self,
+        Target=Self::Target
+    >;
+
+    /// Downgrades the write guard to a read guard.
     fn downgrade(self) -> Self::DowngradeResult;
 
+    /// Downgrades the write guard to an upgradable read guard.
     fn downgrade_to_upgradable(self) -> Self::DowngradeToUpgradableResult;
 }
 

@@ -9,14 +9,22 @@ but not constant, reference.
 
 ```rust
 use parking_lot::RwLock;
-use read_write_api::{RwApi, RwApiWrapper, RwApiWrapperOwned};
+use read_write_api::{
+    DowngradableWriteGuard,
+    RwApi,
+    RwApiWrapper,
+    RwApiWrapperOwned,
+    UpgradableReadGuard,
+};
 
 fn do_something(mut x: impl RwApi<Target=u64>) -> u64 {
-    if *x.read() == 1 {
-        *x.write() = 2;
-        *x.read()
+    let guard = x.upgradable_read();
+    if *guard == 1 {
+        let mut guard = guard.upgrade_to_downgradable();
+        *guard = 2;
+        *guard.downgrade()
     } else {
-        *x.read()
+        *guard
     }
 }
 
