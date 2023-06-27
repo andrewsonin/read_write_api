@@ -199,6 +199,42 @@ pub trait WriteApi: GuardedTarget
     fn write(&mut self) -> Self::WriteGuard<'_>;
 }
 
+pub trait UpgradableReadApi: GuardedTarget
+{
+    type UpgradableReadGuard<'a>: UpgradableReadGuard<Target=Self::Target>
+        where Self: 'a;
+
+    fn upgradable_read(&mut self) -> Self::UpgradableReadGuard<'_>;
+}
+
+pub trait DowngradableWriteApi: GuardedTarget
+{
+    type DowngradableWriteGuard<'a>: DowngradableWriteGuard<Target=Self::Target>
+        where Self: 'a;
+
+    fn downgradable_write(&mut self) -> Self::DowngradableWriteGuard<'_>;
+}
+
+pub trait UpgradableReadGuard: Deref
+{
+    type UpgradeResult: DerefMut<Target=Self::Target>;
+    type UpgradeToDowngradableResult: DowngradableWriteGuard<DowngradeResult=Self>;
+
+    fn upgrade(self) -> Self::UpgradeResult;
+
+    fn upgrade_to_downgradable(self) -> Self::UpgradeToDowngradableResult;
+}
+
+pub trait DowngradableWriteGuard: DerefMut
+{
+    type DowngradeResult: Deref<Target=Self::Target>;
+    type DowngradeToUpgradableResult: UpgradableReadGuard<UpgradeResult=Self>;
+
+    fn downgrade(self) -> Self::DowngradeResult;
+
+    fn downgrade_to_upgradable(self) -> Self::DowngradeToUpgradableResult;
+}
+
 /// Provides a single dereferencing target type for
 /// the [`ReadApi`], [`WriteApi`] and [`RwApi`] traits.
 ///
@@ -239,7 +275,7 @@ pub trait WriteApi: GuardedTarget
 /// ```
 pub trait GuardedTarget
 {
-    /// Dereference target of the read and write guards.
+    /// Dereferencing target of the read and write guards.
     type Target;
 }
 
