@@ -14,7 +14,7 @@
 /// let _ = read(&ReadApiWrapper(&1));
 /// let _ = read(&RwLock::new(2));
 /// ```
-pub struct ReadApiWrapper<'a, T>(
+pub struct ReadApiWrapper<'a, T: ?Sized>(
     /// Wrapped reference.
     pub &'a T
 );
@@ -25,7 +25,7 @@ pub struct ReadApiWrapper<'a, T>(
 /// # Example
 ///
 /// See the [`RwApi`](crate::RwApi) docs for usage examples.
-pub struct RwApiWrapper<'a, T>(
+pub struct RwApiWrapper<'a, T: ?Sized>(
     /// Wrapped reference.
     pub &'a mut T
 );

@@ -1,6 +1,6 @@
 [package]
 name = "read-write-api"
-version = "0.17.0"
+version = "0.17.1"
 authors = ["Andrew Sonin <sonin.cel@yandex.ru>"]
 description = "Provides an interface to unify single-threaded code and RwLocks-based code."
 keywords = ["mutex", "condvar", "rwlock", "once", "thread"]
