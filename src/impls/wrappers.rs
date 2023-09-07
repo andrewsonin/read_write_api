@@ -9,27 +9,27 @@ use crate::{
     WriteApi,
 };
 
-impl<'a, T> GuardedTarget for ReadApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for ReadApiWrapper<'a, T> {
     type Target = &'a T;
 }
 
-impl<'a, T> GuardedTarget for &ReadApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for &ReadApiWrapper<'a, T> {
     type Target = &'a T;
 }
 
-impl<'a, T> GuardedTarget for &mut ReadApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for &mut ReadApiWrapper<'a, T> {
     type Target = &'a T;
 }
 
-impl<'a, T> GuardedTarget for RwApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for RwApiWrapper<'a, T> {
     type Target = &'a mut T;
 }
 
-impl<'a, T> GuardedTarget for &RwApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for &RwApiWrapper<'a, T> {
     type Target = &'a mut T;
 }
 
-impl<'a, T> GuardedTarget for &mut RwApiWrapper<'a, T> {
+impl<'a, T: ?Sized> GuardedTarget for &mut RwApiWrapper<'a, T> {
     type Target = &'a mut T;
 }
 
@@ -45,7 +45,7 @@ impl<T> GuardedTarget for &mut RwApiWrapperOwned<T> {
     type Target = T;
 }
 
-impl<'a, T> ReadApi for ReadApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for ReadApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
@@ -56,7 +56,7 @@ impl<'a, T> ReadApi for ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &ReadApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for &ReadApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
@@ -67,7 +67,7 @@ impl<'a, T> ReadApi for &ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &mut ReadApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for &mut ReadApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a T
         where Self: 'i;
@@ -78,7 +78,7 @@ impl<'a, T> ReadApi for &mut ReadApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for RwApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
@@ -89,7 +89,7 @@ impl<'a, T> ReadApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for &RwApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
@@ -100,7 +100,7 @@ impl<'a, T> ReadApi for &RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> ReadApi for &mut RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> ReadApi for &mut RwApiWrapper<'a, T>
 {
     type ReadGuard<'i> = &'i &'a mut T
         where Self: 'i;
@@ -111,7 +111,7 @@ impl<'a, T> ReadApi for &mut RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> UpgradableReadApi for RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> UpgradableReadApi for RwApiWrapper<'a, T>
 {
     type UpgradableReadGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
@@ -122,7 +122,7 @@ impl<'a, T> UpgradableReadApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> UpgradableReadApi for &mut RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> UpgradableReadApi for &mut RwApiWrapper<'a, T>
 {
     type UpgradableReadGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
@@ -133,7 +133,7 @@ impl<'a, T> UpgradableReadApi for &mut RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> WriteApi for RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> WriteApi for RwApiWrapper<'a, T>
 {
     type WriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
@@ -144,7 +144,7 @@ impl<'a, T> WriteApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> WriteApi for &mut RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> WriteApi for &mut RwApiWrapper<'a, T>
 {
     type WriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
@@ -155,7 +155,7 @@ impl<'a, T> WriteApi for &mut RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> DowngradableWriteApi for RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> DowngradableWriteApi for RwApiWrapper<'a, T>
 {
     type DowngradableWriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;
@@ -166,7 +166,7 @@ impl<'a, T> DowngradableWriteApi for RwApiWrapper<'a, T>
     }
 }
 
-impl<'a, T> DowngradableWriteApi for &mut RwApiWrapper<'a, T>
+impl<'a, T: ?Sized> DowngradableWriteApi for &mut RwApiWrapper<'a, T>
 {
     type DowngradableWriteGuard<'i> = &'i mut &'a mut T
         where Self: 'i;

@@ -1,6 +1,6 @@
 use crate::{DowngradableWriteApi, ReadApi, RwApi, UpgradableReadApi, WriteApi};
 
-impl<T, R> RwApi for T
+impl<T: ?Sized, R: ?Sized> RwApi for T
     where
         Self: ReadApi<Target=R>
         + WriteApi<Target=R>

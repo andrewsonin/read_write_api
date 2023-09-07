@@ -187,7 +187,7 @@ impl<'a, T> DowngradableWriteGuard for RwLockWriteGuard<'a, T>
     }
 }
 
-impl<'a, T> UpgradableReadGuard for &'a mut T
+impl<'a, T: ?Sized> UpgradableReadGuard for &'a mut T
 {
     type UpgradeResult = Self;
     type UpgradeToDowngradableResult = Self;
@@ -203,7 +203,7 @@ impl<'a, T> UpgradableReadGuard for &'a mut T
     }
 }
 
-impl<'a, T> DowngradableWriteGuard for &'a mut T
+impl<'a, T: ?Sized> DowngradableWriteGuard for &'a mut T
 {
     type DowngradeResult = Self;
     type DowngradeToUpgradableResult = Self;
